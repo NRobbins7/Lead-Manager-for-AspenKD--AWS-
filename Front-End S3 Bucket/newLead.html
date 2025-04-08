@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" href="data:,">
+    <title>Create a New Lead Opportunity</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .selected-contact {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        form {
+            display: inline-block;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Create a New Lead Opportunity</h1>
+
+    <!-- Buttons to Add New Contact or Select Existing Contact -->
+    <a href="newContact.html?v=2"><button type="button">New Contact</button></a>
+    <a href="contactList.html?v=2"><button type="button">Choose From Existing Contacts</button></a><br><br>
+
+    <!-- Display Selected Contact -->
+    <p id="selectedContact" class="selected-contact">No contact selected</p>
+
+    <!-- Hidden Input to Store Contact ID for Submission -->
+    <input type="hidden" id="contact_id" name="contact_id">
+
+    <!-- Lead Form -->
+    <form id="leadForm">
+        <label for="ltitle">Opportunity Title:</label><br>
+        <input type="text" id="ltitle" name="ltitle"><br><br>
+
+        <label for="laddress">Street Address:</label><br>
+        <input type="text" id="laddress" name="laddress"><br>
+        
+        <label for="lcity">City:</label><br>
+        <input type="text" id="lcity" name="lcity"><br>
+        
+        <label for="lstate">State:</label><br>
+        <input type="text" id="lstate" name="lstate" maxlength="2"><br>
+        
+        <label for="lzip">Zip Code:</label><br>
+        <input type="text" id="lzip" name="lzip"><br><br>
+
+        <p>Job Status:</p>
+        <input type="radio" id="opp" name="status" value="opp"><label for="opp">Opportunity</label><br>
+        <input type="radio" id="pend" name="status" value="pend"><label for="pend">Pending</label><br>
+        <input type="radio" id="sold" name="status" value="sold"><label for="sold">Sold</label><br>
+        <input type="radio" id="no" name="status" value="no"><label for="no">No Opportunity</label><br><br>
+
+        <p>Job Type:</p>
+        <input type="radio" id="bsmt" name="type" value="bsmt"><label for="bsmt">Basement</label><br>
+        <input type="radio" id="bath" name="type" value="bath"><label for="bath">Bathroom</label><br>
+        <input type="radio" id="comm" name="type" value="comm"><label for="comm">Commercial</label><br>
+        <input type="radio" id="kit" name="type" value="kit"><label for="kit">Kitchen</label><br>
+        <input type="radio" id="rem" name="type" value="rem"><label for="rem">Remodel</label><br>
+        <input type="radio" id="whole" name="type" value="whole"><label for="whole">Whole House</label><br><br>
+
+        <label for="duedate">Due Date:</label><br>
+        <input type="date" id="duedate" name="duedate"><br><br>
+
+        <label for="lnotes">Notes:</label><br>
+        <input type="text" id="lnotes" name="lnotes"><br><br>
+
+        <input type="submit" value="Submit">
+        <a href="index.html?v=2"><button type="button">Back</button></a>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    // Remove previously selected contact from localStorage when the page first loads
+    if (!document.referrer.includes("contactList.html")) {
+        localStorage.removeItem("selectedContactId");
+        localStorage.removeItem("selectedContactName");
+    }
+
+    // Retrieve selected contact from localStorage
+    const selectedContactId = localStorage.getItem("selectedContactId");
+    const selectedContactName = localStorage.getItem("selectedContactName");
+
+    if (selectedContactId && selectedContactName) {
+        document.getElementById("selectedContact").innerText = `Selected Contact: ${selectedContactName}`;
+        document.getElementById("contact_id").value = selectedContactId; // Set hidden input value
+    } else {
+        document.getElementById("selectedContact").innerText = "No contact selected";
+        document.getElementById("contact_id").value = ""; // Ensure no contact is set
+    }
+});
+
+// Handle form submission
+document.getElementById("leadForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const leadData = {
+        contact_id: document.getElementById("contact_id").value,
+        title: document.getElementById("ltitle").value,
+        address: document.getElementById("laddress").value,
+        city: document.getElementById("lcity").value,
+        state: document.getElementById("lstate").value,
+        zip: document.getElementById("lzip").value,
+        status: document.querySelector("input[name='status']:checked")?.value || "",
+        type: document.querySelector("input[name='type']:checked")?.value || "",
+        duedate: document.getElementById("duedate").value,
+        notes: document.getElementById("lnotes").value
+    };
+
+    console.log("Sending lead data:", leadData);
+
+    try {
+        const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-lead", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(leadData)
+        });
+
+        console.log("API Response Status:", response.status);
+        const responseBody = await response.text(); // ✅ Read as text first
+        console.log("Raw API Response:", responseBody);
+
+        // ✅ Try parsing only if the response is valid JSON
+        let result;
+        try {
+            result = JSON.parse(responseBody);
+        } catch (error) {
+            throw new Error("Invalid JSON response from server.");
+        }
+
+        if (response.ok) {
+            alert(result.message || "Lead created successfully!");
+            window.location.href = "index.html"; // ✅ Redirect after success
+        } else {
+            alert("Error creating lead: " + (result.error || "Unknown error"));
+        }
+    } catch (error) {
+        alert("Failed to submit lead. Please try again.");
+        console.error("Submission error:", error);
+    }
+});
+
+
+    </script>
+
+</body>
+</html>

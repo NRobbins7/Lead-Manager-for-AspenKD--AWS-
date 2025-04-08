@@ -1,0 +1,13 @@
+Table,"Create Table"
+ESTIMATE_ROOMS,"CREATE TABLE `ESTIMATE_ROOMS` (
+  `room_id` int NOT NULL AUTO_INCREMENT,
+  `estimate_id` int NOT NULL,
+  `room_type` varchar(100) DEFAULT NULL,
+  `cost` decimal(10,2) DEFAULT NULL,
+  `cabinet_line` varchar(100) DEFAULT NULL,
+  `door_type` varchar(100) DEFAULT NULL,
+  `color` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`room_id`),
+  KEY `estimate_id` (`estimate_id`),
+  CONSTRAINT `ESTIMATE_ROOMS_ibfk_1` FOREIGN KEY (`estimate_id`) REFERENCES `ESTIMATES` (`estimate_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"

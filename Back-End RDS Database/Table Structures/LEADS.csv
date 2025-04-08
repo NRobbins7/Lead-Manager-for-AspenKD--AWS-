@@ -1,0 +1,19 @@
+Table,"Create Table"
+LEADS,"CREATE TABLE `LEADS` (
+  `job_id` int NOT NULL AUTO_INCREMENT,
+  `contact_id` int NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` char(2) DEFAULT NULL,
+  `zip` varchar(10) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `type` varchar(50) DEFAULT NULL,
+  `notes` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `homeowner` varchar(100) DEFAULT 'None',
+  `duedate` date DEFAULT NULL,
+  PRIMARY KEY (`job_id`),
+  KEY `contact_id` (`contact_id`),
+  CONSTRAINT `LEADS_ibfk_1` FOREIGN KEY (`contact_id`) REFERENCES `CONTACTS` (`contact_id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:,">
+    <title>Contact List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 10px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .button-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .contact-item {
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+            cursor: pointer;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .selected {
+            background-color: lightblue;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Contact List</h2>
+
+    <div class="button-container">
+        <button onclick="goBack()">Back</button>
+        <button onclick="confirmSelection()">Select</button>
+    </div>
+
+    <div id="contactList">Loading contacts...</div>
+
+    <script>
+    let selectedContact = null; // Store selected contact
+
+    document.addEventListener("DOMContentLoaded", async function () {
+    const contactListElement = document.getElementById("contactList");
+
+    try {
+        // Fetch contacts from API
+        const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/get-contacts");
+        const data = await response.json();
+
+        console.log("API Response:", data); // Debugging
+
+        if (response.ok && data.contacts) {
+            contactListElement.innerHTML = ""; // Clear "Loading" text
+            data.contacts.forEach(contact => {
+                const contactDiv = document.createElement("div");
+                contactDiv.className = "contact-item";
+                contactDiv.innerText = `${contact.displayname || "No Name"} - ${contact.address || "No Address"}`;
+                contactDiv.setAttribute("data-id", contact.contact_id);
+                contactDiv.setAttribute("data-name", contact.displayname || "Unknown");
+
+                contactDiv.onclick = () => selectContact(contactDiv, contact.contact_id, contact.displayname);
+                contactListElement.appendChild(contactDiv);
+            });
+        } else {
+            contactListElement.innerHTML = `<p>Error: No contacts found.</p>`;
+        }
+    } catch (error) {
+        console.error("Error fetching contacts:", error);
+        contactListElement.innerHTML = `<p>Failed to load contacts.</p>`;
+    }
+});
+
+// Function to highlight and store selected contact
+function selectContact(element, contactId, contactName) {
+    // Remove previous selection
+    document.querySelectorAll(".contact-item").forEach(item => item.classList.remove("selected"));
+
+    // Highlight the clicked contact
+    element.classList.add("selected");
+
+    // Store selected contact info
+    selectedContact = { id: contactId, name: contactName };
+}
+
+// Function to confirm selection and redirect back to newLead.html
+function confirmSelection() {
+    if (!selectedContact) {
+        alert("Please select a contact first.");
+        return;
+    }
+
+    // Store selected contact in localStorage
+    localStorage.setItem("selectedContactId", selectedContact.id);
+    localStorage.setItem("selectedContactName", selectedContact.name);
+
+    // Redirect back to newLead.html
+    window.location.href = "newLead.html?v=2";
+}
+
+// Function to go back
+function goBack() {
+    window.history.back();
+}
+
+    </script>
+
+</body>
+</html>

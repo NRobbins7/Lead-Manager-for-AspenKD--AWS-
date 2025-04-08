@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lead Details</title>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <h1>Lead Details</h1>
+
+  <!-- Lead Info -->
+  <div id="lead-info">
+    <label>Title: <input id="lead-title" /></label><br>
+    <label>Address: <input id="lead-address" /></label><br>
+    <label>City: <input id="lead-city" /></label><br>
+    <label>State: <input id="lead-state" /></label><br>
+    <label>Zip: <input id="lead-zip" /></label><br>
+    <label>Status: <input id="lead-status" /></label><br>
+    <label>Type: <input id="lead-type" /></label><br>
+    <label>Notes:<br><textarea id="lead-notes"></textarea></label><br>
+    <button id="save-lead">Save Lead Info</button>
+  </div>
+
+  <hr>
+
+  <!-- Estimate Versions -->
+<div id="estimates">
+    <h2>Estimate Versions</h2>
+    <ul id="estimate-list"></ul>
+    <button id="create-estimate">Create New Estimate Version</button>
+  </div>
+  
+  <!-- Estimate Modal -->
+  <div id="estimate-modal" style="display:none;">
+    <h3>Editing Estimate <span id="modal-version"></span></h3>
+    <div id="modal-room-list"></div>
+    <button id="add-room-to-estimate">Add Room</button>
+    <button id="save-estimate-changes">Save Changes</button>
+    <button onclick="document.getElementById('estimate-modal').style.display='none'">Close</button>
+  </div>
+  
+  
+  
+
+  <hr>
+
+  <!-- Rooms For Selected Estimate -->
+  <div id="rooms-section" style="display:none;">
+    <h2>Rooms for Estimate <span id="current-version"></span></h2>
+    <div id="room-list"></div>
+  </div>
+
+  <script src="leadDetails.js"></script>
+</body>
+</html>
