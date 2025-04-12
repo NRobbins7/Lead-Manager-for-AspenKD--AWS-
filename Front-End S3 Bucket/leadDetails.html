@@ -32,16 +32,31 @@
 <div id="estimates">
     <h2>Estimate Versions</h2>
     <ul id="estimate-list"></ul>
-    <button id="create-estimate">Create New Estimate Version</button>
   </div>
   
-  <div id="estimate-modal" style="display:none;">
-    <h3>Editing Estimate <span id="modal-version"></span></h3>
-    <div id="modal-room-list"></div>
-    <button id="add-room-to-estimate">Add Room</button>
-    <button id="save-estimate-changes">Save Changes</button>
-    <button onclick="document.getElementById('estimate-modal').style.display='none'">Close</button>
-  </div>
+
+<div id="estimate-modal" style="display:none;">
+  <h3>Editing Estimate <span id="modal-version"></span></h3>
+
+  <label>Status:
+    <select id="modal-estimate-status">
+      <option value="">-- Select Status --</option>
+      <option value="Approved">Approved</option>
+      <option value="Lost">Lost</option>
+      <option value="New Revision">New Revision</option>
+      <option value="Pending">Pending</option>
+    </select>
+  </label><br><br>
+
+  <label>Due Date: <input type="date" id="modal-duedate" /></label><br><br>
+
+  <div id="modal-room-list"></div>
+
+  <button id="add-room-to-estimate">Add Room</button>
+  <button id="save-estimate-changes">Save Changes</button>
+  <button onclick="document.getElementById('estimate-modal').style.display='none'">Close</button>
+</div>
+
   
   
   

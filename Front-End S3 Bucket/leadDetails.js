@@ -95,7 +95,7 @@ function getJobIdFromURL() {
         alert(`Estimate ${parsed.version} created successfully!`);
         document.getElementById("rooms-section").style.display = "block";
         document.getElementById("current-version").textContent = parsed.version;
-        fetchEstimates(jobId); // Refresh list
+        fetchEstimates(jobId); 
       } else {
         alert("Failed to create estimate: " + parsed.error);
       }
@@ -160,7 +160,6 @@ function getJobIdFromURL() {
       const rooms = parsed.rooms || [];
       const modalList = document.getElementById("modal-room-list");
       modalList.innerHTML = "";
-  
       rooms.forEach(room => {
         const div = document.createElement("div");
         div.innerHTML = `
@@ -170,7 +169,6 @@ function getJobIdFromURL() {
           <label>Cabinet Line: <input class="cabinet-line" value="${room.cabinet_line}" /></label><br>
           <label>Door Type: <input class="door-type" value="${room.door_type}" /></label><br>
           <label>Color: <input class="room-color" value="${room.color}" /></label>
-          <button class="delete-room" onclick="deleteRoom(${room.room_id}, ${estimateId}, '${version}')">Delete Room</button>
           <hr>
         `;
         modalList.appendChild(div);
@@ -179,26 +177,14 @@ function getJobIdFromURL() {
       document.getElementById("save-estimate-changes").onclick = () => saveEstimateChanges(estimateId, version);
       document.getElementById("add-room-to-estimate").onclick = addRoomToEstimate;
       document.getElementById("estimate-modal").style.display = "block";
+  
+      document.getElementById("modal-estimate-status").value = parsed.status || "";
+      document.getElementById("modal-duedate").value = parsed.duedate || "";
+  
     } catch (err) {
       console.error("Error loading modal rooms:", err);
       alert("Could not load room data.");
     }
-  }
-  
-  function addRoomToEstimate() {
-    const modalList = document.getElementById("modal-room-list");
-    const div = document.createElement("div");
-    div.classList.add("new-room");
-    div.innerHTML = `
-      <input type="hidden" class="room-id" value="new" />
-      <label>Room Type: <input class="room-type" value="" /></label><br>
-      <label>Cost: <input type="number" class="room-cost" value="" /></label><br>
-      <label>Cabinet Line: <input class="cabinet-line" value="" /></label><br>
-      <label>Door Type: <input class="door-type" value="" /></label><br>
-      <label>Color: <input class="room-color" value="" /></label>
-      <hr>
-    `;
-    modalList.appendChild(div);
   }
   
   async function saveEstimateChanges(estimateId, version) {
@@ -210,8 +196,8 @@ function getJobIdFromURL() {
       const cabinet_line = div.querySelector(".cabinet-line").value;
       const door_type = div.querySelector(".door-type").value;
       const color = div.querySelector(".room-color").value;
-  
       const body = { room_type, cost, cabinet_line, door_type, color };
+  
       try {
         if (room_id === "new") {
           body.estimate_id = estimateId;
@@ -235,11 +221,78 @@ function getJobIdFromURL() {
       }
     }
   
-    alert("Estimate rooms saved.");
+    const status = document.getElementById("modal-estimate-status").value;
+    const duedate = document.getElementById("modal-duedate").value;
+    await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ estimate_id: estimateId, status, duedate })
+    });
+  
+    const jobId = getJobIdFromURL();
+    let leadUpdate = { job_id: jobId };
+  
+    if (status === "Approved") {
+      leadUpdate.status = "sold";
+    } else if (status === "Lost") {
+      const reason = prompt("Reason for lost lead?") || "";
+      leadUpdate.status = "no opportunity";
+      leadUpdate.loss_reason = reason;
+    } else if (status === "Pending") {
+      const followup = prompt("Enter followup date (YYYY-MM-DD):") || "";
+      leadUpdate.status = "pending";
+      leadUpdate.followup = followup;
+    } else if (status === "New Revision") {
+      const newDueDate = prompt("Enter due date for new revision (YYYY-MM-DD):") || "";
+      const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ job_id: jobId })
+      });
+      const result = await response.json();
+      const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
+      const newEstimateId = parsed.estimate_id;
+      const newVersion = parsed.version;
+  
+      await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ estimate_id: newEstimateId, status: "Pending", duedate: newDueDate })
+      });
+  
+      await fetchEstimates(jobId);
+      await openEstimateModal(newEstimateId, newVersion);
+      return;
+    }
+  
+    await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-lead", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(leadUpdate)
+    });
+  
+    alert("Changes saved.");
+    await fetchEstimates(jobId);
     await openEstimateModal(estimateId, version);
-    await fetchEstimates(getJobIdFromURL());
-    await refreshEstimatePreviewIfLatest(estimateId);
   }
+  
+  
+  function addRoomToEstimate() {
+    const modalList = document.getElementById("modal-room-list");
+    const div = document.createElement("div");
+    div.classList.add("new-room");
+    div.innerHTML = `
+      <input type="hidden" class="room-id" value="new" />
+      <label>Room Type: <input class="room-type" value="" /></label><br>
+      <label>Cost: <input type="number" class="room-cost" value="" /></label><br>
+      <label>Cabinet Line: <input class="cabinet-line" value="" /></label><br>
+      <label>Door Type: <input class="door-type" value="" /></label><br>
+      <label>Color: <input class="room-color" value="" /></label>
+      <hr>
+    `;
+    modalList.appendChild(div);
+  }
+  
   
   async function deleteRoom(roomId, estimateId, version) {
     if (!confirm("Are you sure you want to delete this room?")) return;
@@ -282,9 +335,6 @@ function getJobIdFromURL() {
     fetchEstimates(jobId);
     document.getElementById("save-lead").addEventListener("click", function () {
       saveLeadDetails(jobId);
-    });
-    document.getElementById("create-estimate").addEventListener("click", function () {
-      createNewEstimate(jobId);
     });
   });
   
