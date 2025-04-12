@@ -25,20 +25,16 @@
 
     <h1>Create a New Lead Opportunity</h1>
 
-    <!-- Buttons to Add New Contact or Select Existing Contact -->
     <a href="newContact.html?v=2"><button type="button">New Contact</button></a>
     <a href="contactList.html?v=2"><button type="button">Choose From Existing Contacts</button></a><br><br>
 
-    <!-- Display Selected Contact -->
     <p id="selectedContact" class="selected-contact">No contact selected</p>
 
-    <!-- Hidden Input to Store Contact ID for Submission -->
-    <input type="hidden" id="contact_id" name="contact_id">
+    <input type="hidden" id="contact_id" name="contact_id" required>
 
-    <!-- Lead Form -->
     <form id="leadForm">
         <label for="ltitle">Opportunity Title:</label><br>
-        <input type="text" id="ltitle" name="ltitle"><br><br>
+        <input type="text" id="ltitle" name="ltitle" required><br><br>
 
         <label for="laddress">Street Address:</label><br>
         <input type="text" id="laddress" name="laddress"><br>
@@ -78,26 +74,23 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-    // Remove previously selected contact from localStorage when the page first loads
     if (!document.referrer.includes("contactList.html")) {
         localStorage.removeItem("selectedContactId");
         localStorage.removeItem("selectedContactName");
     }
 
-    // Retrieve selected contact from localStorage
     const selectedContactId = localStorage.getItem("selectedContactId");
     const selectedContactName = localStorage.getItem("selectedContactName");
 
     if (selectedContactId && selectedContactName) {
         document.getElementById("selectedContact").innerText = `Selected Contact: ${selectedContactName}`;
-        document.getElementById("contact_id").value = selectedContactId; // Set hidden input value
+        document.getElementById("contact_id").value = selectedContactId; 
     } else {
         document.getElementById("selectedContact").innerText = "No contact selected";
-        document.getElementById("contact_id").value = ""; // Ensure no contact is set
+        document.getElementById("contact_id").value = ""; 
     }
 });
 
-// Handle form submission
 document.getElementById("leadForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -124,10 +117,9 @@ document.getElementById("leadForm").addEventListener("submit", async function (e
         });
 
         console.log("API Response Status:", response.status);
-        const responseBody = await response.text(); // ✅ Read as text first
+        const responseBody = await response.text(); 
         console.log("Raw API Response:", responseBody);
 
-        // ✅ Try parsing only if the response is valid JSON
         let result;
         try {
             result = JSON.parse(responseBody);
@@ -137,7 +129,7 @@ document.getElementById("leadForm").addEventListener("submit", async function (e
 
         if (response.ok) {
             alert(result.message || "Lead created successfully!");
-            window.location.href = "index.html"; // ✅ Redirect after success
+            window.location.href = "index.html?v=2"; 
         } else {
             alert("Error creating lead: " + (result.error || "Unknown error"));
         }

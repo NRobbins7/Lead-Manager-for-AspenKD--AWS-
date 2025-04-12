@@ -5,9 +5,16 @@
   <meta charset="UTF-8">
 </head>
 <body>
-  <h1>Lead Details</h1>
+  <h1>Lead Details</h1><br>
+  
+  <div style="margin-top: 10px;">
+    <a href="index.html?v=2">
+      <button type="button" style="padding: 10px 20px; font-size: 16px;">← Back to Dashboard</button>
+    </a><br><br><br><br>
+  </div>
+  
+  
 
-  <!-- Lead Info -->
   <div id="lead-info">
     <label>Title: <input id="lead-title" /></label><br>
     <label>Address: <input id="lead-address" /></label><br>
@@ -22,14 +29,12 @@
 
   <hr>
 
-  <!-- Estimate Versions -->
 <div id="estimates">
     <h2>Estimate Versions</h2>
     <ul id="estimate-list"></ul>
     <button id="create-estimate">Create New Estimate Version</button>
   </div>
   
-  <!-- Estimate Modal -->
   <div id="estimate-modal" style="display:none;">
     <h3>Editing Estimate <span id="modal-version"></span></h3>
     <div id="modal-room-list"></div>
@@ -43,7 +48,6 @@
 
   <hr>
 
-  <!-- Rooms For Selected Estimate -->
   <div id="rooms-section" style="display:none;">
     <h2>Rooms for Estimate <span id="current-version"></span></h2>
     <div id="room-list"></div>

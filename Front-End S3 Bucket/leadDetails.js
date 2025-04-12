@@ -80,6 +80,31 @@ function getJobIdFromURL() {
       console.error("Failed to load estimates:", err);
     }
   }
+  async function createNewEstimate(jobId) {
+    try {
+      const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ job_id: jobId })
+      });
+  
+      const result = await response.json();
+      const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
+  
+      if (response.ok) {
+        alert(`Estimate ${parsed.version} created successfully!`);
+        document.getElementById("rooms-section").style.display = "block";
+        document.getElementById("current-version").textContent = parsed.version;
+        fetchEstimates(jobId); // Refresh list
+      } else {
+        alert("Failed to create estimate: " + parsed.error);
+      }
+    } catch (err) {
+      console.error("Error creating estimate:", err);
+      alert("Error: " + err.message);
+    }
+  }
+  
   async function fetchRooms(estimateId) {
     try {
       const response = await fetch(`https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/get-rooms?estimate_id=${estimateId}`);

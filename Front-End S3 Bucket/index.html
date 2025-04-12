@@ -30,19 +30,24 @@
         th {
             background-color: #f4f4f4;
         }
+        a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
     <h1>Lead Dashboard</h1>
 
-    <!-- Buttons to Create a New Lead or Contact -->
     <div class="button-container">
         <button onclick="window.location.href='newLead.html?v=2'">Create New Lead</button>
         <button onclick="window.location.href='newContact.html?v=2'">Create New Contact</button>
     </div>
 
-    <!-- Table to Display Leads -->
     <table>
         <thead>
             <tr>
@@ -58,7 +63,6 @@
                 <th>Notes</th>
             </tr>
         </thead>
-        
         <tbody id="leadTableBody">
             <tr><td colspan="11">Loading leads...</td></tr>
         </tbody>
@@ -66,52 +70,42 @@
 
     <script>
         async function fetchLeads() {
-    try {
-        const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/get-leads");
+            try {
+                const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/get-leads");
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
+                const data = await response.json();
+                const parsedBody = typeof data.body === "string" ? JSON.parse(data.body) : data.body;
+
+                if (!parsedBody || !parsedBody.leads) throw new Error("API response missing 'leads'.");
+
+                const leadTable = document.getElementById("leadTableBody");
+                leadTable.innerHTML = "";
+
+                parsedBody.leads.forEach(lead => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${lead.contact_name}</td> 
+                        <td><a href="leadDetails.html?job_id=${lead.job_id}?v=2">${lead.title}</a></td>
+                        <td>${lead.address || "N/A"}</td>
+                        <td>${lead.city || "N/A"}</td>
+                        <td>${lead.state || "N/A"}</td>
+                        <td>${lead.zip || "N/A"}</td>
+                        <td>${lead.status || "N/A"}</td>
+                        <td>${lead.type || "N/A"}</td>
+                        <td>${lead.duedate || "N/A"}</td>
+                        <td>${lead.notes || "N/A"}</td>
+                    `;
+                    leadTable.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Error fetching leads:", error);
+                document.getElementById("leadTableBody").innerHTML =
+                    `<tr><td colspan="10">Failed to load leads.</td></tr>`;
+            }
         }
-
-        const data = await response.json();
-        console.log("Raw API Response:", data);
-
-        // ✅ Ensure the body is parsed correctly
-        const parsedBody = typeof data.body === "string" ? JSON.parse(data.body) : data.body;
-        console.log("Parsed API Body:", parsedBody);
-
-        if (!parsedBody || !parsedBody.leads) {
-            throw new Error("API response does not contain 'leads'. Check the response format.");
-        }
-
-        const leadTable = document.getElementById("leadTableBody");
-        leadTable.innerHTML = ""; // Clear previous content
-
-        parsedBody.leads.forEach(lead => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${lead.contact_name}</td> 
-                <td>${lead.title}</td>
-                <td>${lead.address || "N/A"}</td>
-                <td>${lead.city || "N/A"}</td>
-                <td>${lead.state || "N/A"}</td>
-                <td>${lead.zip || "N/A"}</td>
-                <td>${lead.status || "N/A"}</td>
-                <td>${lead.type || "N/A"}</td>
-                <td>${lead.duedate || "N/A"}</td>
-                <td>${lead.notes || "N/A"}</td>
-            `;
-            leadTable.appendChild(row);
-        });
-
-    } catch (error) {
-        console.error("Error fetching leads:", error);
-        document.getElementById("leadTableBody").innerHTML = `<tr><td colspan="10">Failed to load leads.</td></tr>`;
-    }
-}
-
-
-
 
         document.addEventListener("DOMContentLoaded", fetchLeads);
     </script>
