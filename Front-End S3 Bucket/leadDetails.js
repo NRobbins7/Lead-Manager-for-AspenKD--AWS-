@@ -173,7 +173,8 @@ function getJobIdFromURL() {
         `;
         modalList.appendChild(div);
       });
-  
+      document.getElementById("estimate-modal").setAttribute("data-estimate-id", estimateId);
+
       document.getElementById("save-estimate-changes").onclick = () => saveEstimateChanges(estimateId, version);
       document.getElementById("add-room-to-estimate").onclick = addRoomToEstimate;
       document.getElementById("estimate-modal").style.display = "block";
@@ -187,7 +188,9 @@ function getJobIdFromURL() {
     }
   }
   
-  async function saveEstimateChanges(estimateId, version) {
+  async function saveEstimateChanges(_, version) {
+    const estimateId = document.getElementById("estimate-modal").getAttribute("data-estimate-id");
+  
     const entries = document.querySelectorAll("#modal-room-list > div");
     for (const div of entries) {
       const room_id = div.querySelector(".room-id").value;
