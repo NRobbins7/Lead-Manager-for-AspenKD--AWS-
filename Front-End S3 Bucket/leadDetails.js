@@ -190,8 +190,8 @@ function getJobIdFromURL() {
   
   async function saveEstimateChanges(_, version) {
     const estimateId = document.getElementById("estimate-modal").getAttribute("data-estimate-id");
-  
     const entries = document.querySelectorAll("#modal-room-list > div");
+  
     for (const div of entries) {
       const room_id = div.querySelector(".room-id").value;
       const room_type = div.querySelector(".room-type").value;
@@ -226,6 +226,9 @@ function getJobIdFromURL() {
   
     const status = document.getElementById("modal-estimate-status").value;
     const duedate = document.getElementById("modal-duedate").value;
+  
+    console.log("Updating estimate:", { estimateId, status, duedate });
+  
     await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -278,6 +281,7 @@ function getJobIdFromURL() {
     await fetchEstimates(jobId);
     await openEstimateModal(estimateId, version);
   }
+  
   
   
   function addRoomToEstimate() {
