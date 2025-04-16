@@ -228,7 +228,9 @@ function getJobIdFromURL() {
     const duedate = document.getElementById("modal-duedate").value;
   
     console.log("Updating estimate:", { estimateId, status, duedate });
-  
+    console.log("DEBUG estimateId:", estimateId);
+    console.log("Payload to update-estimate:", JSON.stringify({ estimate_id: estimateId, status, duedate }));
+
     await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -259,7 +261,9 @@ function getJobIdFromURL() {
       const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
       const newEstimateId = parsed.estimate_id;
       const newVersion = parsed.version;
-  
+      console.log("DEBUG estimateId:", estimateId);
+      console.log("Payload to update-estimate:", JSON.stringify({ estimate_id: estimateId, status, duedate }));
+
       await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
