@@ -193,7 +193,8 @@ function getJobIdFromURL() {
     const estimateId = document.getElementById("estimate-modal").getAttribute("data-estimate-id");
     const version = document.getElementById("modal-version").textContent;
   
-  
+    const entries = document.querySelectorAll("#modal-room-list > div");
+
     for (const div of entries) {
       const room_id = div.querySelector(".room-id").value;
       const room_type = div.querySelector(".room-type").value;
