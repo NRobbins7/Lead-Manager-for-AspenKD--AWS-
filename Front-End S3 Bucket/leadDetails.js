@@ -207,6 +207,12 @@ function getJobIdFromURL() {
       try {
         if (room_id === "new") {
           body.estimate_id = estimateId;
+          console.log("Sending estimate update:", {
+            estimate_id: estimateId,
+            status,
+            duedate
+          });
+          
           await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-room", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
