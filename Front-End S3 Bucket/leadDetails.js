@@ -205,7 +205,7 @@ function getJobIdFromURL() {
   
       try {
         if (room_id === "new") {
-          body.estimate_id = estimateId;
+          body.estimate_id = parseInt(estimateId);
           await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-room", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -238,24 +238,32 @@ function getJobIdFromURL() {
       });
       const result = await response.json();
       const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
-      const revisionEstimateId = parsed.estimate_id;
+      estimateId = parsed.estimate_id;
       const newVersion = parsed.version;
   
       await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ estimate_id: revisionEstimateId, status: "Pending", duedate: newDueDate })
+        body: JSON.stringify({
+          estimate_id: parseInt(estimateId),
+          status: "Pending",
+          duedate: newDueDate
+        })
       });
   
       await fetchEstimates(getJobIdFromURL());
-      await openEstimateModal(revisionEstimateId, newVersion);
+      await openEstimateModal(estimateId, newVersion);
       return;
     }
   
     await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estimate_id: estimateId, status, duedate })
+      body: JSON.stringify({
+        estimate_id: parseInt(estimateId),
+        status,
+        duedate
+      })
     });
   
     const jobId = getJobIdFromURL();
@@ -283,7 +291,6 @@ function getJobIdFromURL() {
     await fetchEstimates(jobId);
     await openEstimateModal(estimateId, version);
   }
-  
   
   
   function addRoomToEstimate() {
