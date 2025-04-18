@@ -268,8 +268,9 @@ function getJobIdFromURL() {
       });
       const result = await response.json();
       const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
-      const newEstimateId = parsed.estimate_id;
+      estimateId = parsed.estimate_id;
       const newVersion = parsed.version;
+
       console.log("DEBUG estimateId:", estimateId);
       console.log("Payload to update-estimate:", JSON.stringify({ estimate_id: estimateId, status, duedate }));
 
