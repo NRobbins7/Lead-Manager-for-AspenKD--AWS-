@@ -277,11 +277,11 @@ function getJobIdFromURL() {
       await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ estimate_id: newEstimateId, status: "Pending", duedate: newDueDate })
+        body: JSON.stringify({ estimate_id: estimateId, status: "Pending", duedate: newDueDate })
       });
   
       await fetchEstimates(jobId);
-      await openEstimateModal(newEstimateId, newVersion);
+      await openEstimateModal(estimateId, newVersion);
       return;
     }
   
