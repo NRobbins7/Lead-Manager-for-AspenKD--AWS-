@@ -192,10 +192,8 @@ function getJobIdFromURL() {
   async function saveEstimateChanges() {
     let estimateId = document.getElementById("estimate-modal").getAttribute("data-estimate-id");
     const version = document.getElementById("modal-version").textContent;
-    const entries = document.querySelectorAll("#modal-room-list > div");
   
-    const status = document.getElementById("modal-estimate-status").value;
-    const duedate = document.getElementById("modal-duedate").value;
+    const entries = document.querySelectorAll("#modal-room-list > div");
   
     for (const div of entries) {
       const room_id = div.querySelector(".room-id").value;
@@ -229,15 +227,8 @@ function getJobIdFromURL() {
       }
     }
   
-    console.log("Updating estimate:", { estimateId, status, duedate });
-    console.log("DEBUG estimateId:", estimateId);
-    console.log("Payload to update-estimate:", JSON.stringify({ estimate_id: estimateId, status, duedate }));
-  
-    await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ estimate_id: estimateId, status, duedate })
-    });
+    const status = document.getElementById("modal-estimate-status").value;
+    const duedate = document.getElementById("modal-duedate").value;
   
     const jobId = getJobIdFromURL();
     let leadUpdate = { job_id: jobId };
@@ -264,9 +255,6 @@ function getJobIdFromURL() {
       estimateId = parsed.estimate_id;
       const newVersion = parsed.version;
   
-      console.log("DEBUG estimateId:", estimateId);
-      console.log("Payload to update-estimate:", JSON.stringify({ estimate_id: estimateId, status: "Pending", duedate: newDueDate }));
-  
       await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -278,6 +266,12 @@ function getJobIdFromURL() {
       return;
     }
   
+    await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ estimate_id: estimateId, status, duedate })
+    });
+  
     await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-lead", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -288,6 +282,7 @@ function getJobIdFromURL() {
     await fetchEstimates(jobId);
     await openEstimateModal(estimateId, version);
   }
+  
   
   
   
