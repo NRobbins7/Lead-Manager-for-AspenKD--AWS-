@@ -191,6 +191,13 @@ function getJobIdFromURL() {
   
   async function saveEstimateChanges() {
     let estimateId = document.getElementById("estimate-modal").getAttribute("data-estimate-id");
+    if (!estimateId || estimateId === "undefined") {
+      console.error("Invalid estimateId:", estimateId);
+      alert("Estimate ID is missing or invalid.");
+      return;
+    }
+    estimateId = parseInt(estimateId);
+
     const version = document.getElementById("modal-version").textContent;
     const entries = document.querySelectorAll("#modal-room-list > div");
   
