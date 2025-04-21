@@ -196,9 +196,40 @@ function getJobIdFromURL() {
       alert("Estimate ID is missing or invalid.");
       return;
     }
+  
+    const status = document.getElementById("modal-estimate-status").value;
+  
+    if (status === "New Revision") {
+      const newDueDate = prompt("Enter due date for new revision (YYYY-MM-DD):") || "";
+      const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ job_id: getJobIdFromURL() })
+      });
+      const result = await response.json();
+      const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
+      estimateId = parseInt(parsed.estimate_id);
+      const newVersion = parsed.version;
+  
+      document.getElementById("estimate-modal").setAttribute("data-estimate-id", estimateId);
+  
+      await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          estimate_id: estimateId,
+          status: "Pending",
+          duedate: newDueDate
+        })
+      });
+  
+      await fetchEstimates(getJobIdFromURL());
+      await openEstimateModal(estimateId, newVersion);
+      return;
+    }
+  
     estimateId = parseInt(estimateId);
     document.getElementById("estimate-modal").setAttribute("data-estimate-id", estimateId);
-
     const version = document.getElementById("modal-version").textContent;
     const entries = document.querySelectorAll("#modal-room-list > div");
   
@@ -234,37 +265,44 @@ function getJobIdFromURL() {
       }
     }
   
-    const status = document.getElementById("modal-estimate-status").value;
     const duedate = document.getElementById("modal-duedate").value;
   
-    if (status === "New Revision") {
-      const newDueDate = prompt("Enter due date for new revision (YYYY-MM-DD):") || "";
-      const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-estimate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ job_id: getJobIdFromURL() })
-      });
-      const result = await response.json();
-      const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
-      estimateId = parseInt(parsed.estimate_id);
-      const newVersion = parsed.version;
-    
-      document.getElementById("estimate-modal").setAttribute("data-estimate-id", estimateId);
-    
-      await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          estimate_id: estimateId,
-          status: "Pending",
-          duedate: newDueDate
-        })
-      });
-    
-      await fetchEstimates(getJobIdFromURL());
-      await openEstimateModal(estimateId, newVersion);
-      return;
+    await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        estimate_id: estimateId,
+        status,
+        duedate
+      })
+    });
+  
+    const jobId = getJobIdFromURL();
+    let leadUpdate = { job_id: jobId };
+  
+    if (status === "Approved") {
+      leadUpdate.status = "sold";
+    } else if (status === "Lost") {
+      const reason = prompt("Reason for lost lead?") || "";
+      leadUpdate.status = "no opportunity";
+      leadUpdate.loss_reason = reason;
+    } else if (status === "Pending") {
+      const followup = prompt("Enter followup date (YYYY-MM-DD):") || "";
+      leadUpdate.status = "pending";
+      leadUpdate.followup = followup;
     }
+  
+    await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-lead", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(leadUpdate)
+    });
+  
+    alert("Changes saved.");
+    await fetchEstimates(jobId);
+    await openEstimateModal(estimateId, version);
+  }
+  
     
   
     await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
