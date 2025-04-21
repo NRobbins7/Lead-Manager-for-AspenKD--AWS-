@@ -197,6 +197,8 @@ function getJobIdFromURL() {
       return;
     }
     estimateId = parseInt(estimateId);
+    document.getElementById("estimate-modal").setAttribute("data-estimate-id", estimateId);
+
     const version = document.getElementById("modal-version").textContent;
     const entries = document.querySelectorAll("#modal-room-list > div");
   
@@ -246,7 +248,9 @@ function getJobIdFromURL() {
       const parsed = typeof result.body === "string" ? JSON.parse(result.body) : result.body;
       estimateId = parseInt(parsed.estimate_id);
       const newVersion = parsed.version;
-  
+    
+      document.getElementById("estimate-modal").setAttribute("data-estimate-id", estimateId);
+    
       await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -256,11 +260,12 @@ function getJobIdFromURL() {
           duedate: newDueDate
         })
       });
-  
+    
       await fetchEstimates(getJobIdFromURL());
       await openEstimateModal(estimateId, newVersion);
       return;
     }
+    
   
     await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/update-estimate", {
       method: "PUT",
