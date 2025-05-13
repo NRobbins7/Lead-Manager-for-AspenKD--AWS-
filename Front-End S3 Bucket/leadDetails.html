@@ -1,72 +1,156 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="style.css">
+
   <title>Lead Details</title>
   <meta charset="UTF-8">
 </head>
 <body>
+  <script src="header.js" defer></script>
+
   <h1>Lead Details</h1><br>
-  
+
   <div style="margin-top: 10px;">
     <a href="index.html?v=2">
       <button type="button" style="padding: 10px 20px; font-size: 16px;">← Back to Dashboard</button>
     </a><br><br><br><br>
   </div>
-  
-  
 
-  <div id="lead-info">
-    <label>Title: <input id="lead-title" /></label><br>
-    <label>Address: <input id="lead-address" /></label><br>
-    <label>City: <input id="lead-city" /></label><br>
-    <label>State: <input id="lead-state" /></label><br>
-    <label>Zip: <input id="lead-zip" /></label><br>
-    <label>Status: <input id="lead-status" /></label><br>
-    <label>Type: <input id="lead-type" /></label><br>
-    <label>Notes:<br><textarea id="lead-notes"></textarea></label><br>
+  <div id="lead-info" class="lead-details-container">
+    <div class="detail-row">
+      <div class="field-group">
+        <label for="lead-title">Title</label>
+        <input type="text" id="lead-title">
+      </div>
+      <div class="field-group">
+        <label for="lead-type">Type</label>
+        <input type="text" id="lead-type">
+      </div>
+      <div class="field-group">
+        <label for="lead-status">Status</label>
+        <input type="text" id="lead-status">
+      </div>
+    </div>
+  
+    <div class="detail-row">
+      <div class="field-group">
+        <label for="lead-address">Address</label>
+        <input type="text" id="lead-address">
+      </div>
+      <div class="field-group">
+        <label for="lead-city">City</label>
+        <input type="text" id="lead-city">
+      </div>
+      <div class="field-group">
+        <label for="lead-state">State</label>
+        <input type="text" id="lead-state">
+      </div>
+      <div class="field-group">
+        <label for="lead-zip">Zip</label>
+        <input type="text" id="lead-zip">
+      </div>
+    </div>
+  
+    <div class="detail-row">
+      <div class="field-group" style="flex: 1;">
+        <label for="lead-notes">Notes</label>
+        <textarea id="lead-notes" rows="3"></textarea>
+      </div>
+    </div>
+  
     <button id="save-lead">Save Lead Info</button>
   </div>
-
-  <hr>
-
-<div id="estimates">
-    <h2>Estimate Versions</h2>
-    <ul id="estimate-list"></ul>
-  </div>
-  
-
-<div id="estimate-modal" style="display:none;">
-  <h3>Editing Estimate <span id="modal-version"></span></h3>
-
-  <label>Status:
-    <select id="modal-estimate-status">
-      <option value="">-- Select Status --</option>
-      <option value="Approved">Approved</option>
-      <option value="Lost">Lost</option>
-      <option value="New Revision">New Revision</option>
-      <option value="Pending">Pending</option>
-    </select>
-  </label><br><br>
-
-  <label>Due Date: <input type="date" id="modal-duedate" /></label><br><br>
-
-  <div id="modal-room-list"></div>
-
-  <button id="add-room-to-estimate">Add Room</button>
-  <button id="save-estimate-changes">Save Changes</button>
-  <button onclick="document.getElementById('estimate-modal').style.display='none'">Close</button>
-</div>
-
-  
-  
   
 
   <hr>
 
-  <div id="rooms-section" style="display:none;">
-    <h2>Rooms for Estimate <span id="current-version"></span></h2>
-    <div id="room-list"></div>
+  <div id="estimate-layout" style="display: flex; gap: 40px;">
+    <div style="width: 250px;">
+      <h2>Estimate Versions</h2>
+      <ul id="estimate-list" style="list-style-type: none; padding-left: 0;"></ul>
+    </div>
+
+    <div style="flex-grow: 1;">
+      <div id="estimate-modal" style="display:none;">
+        <h3>Editing Estimate <span id="modal-version"></span></h3>
+
+        <label>Status:
+          <select id="modal-estimate-status">
+            <option value="">-- Select Status --</option>
+            <option value="Approved">Approved</option>
+            <option value="Lost">Lost</option>
+            <option value="New Revision">New Revision</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </label><br><br>
+
+        <label>Due Date: <input type="date" id="modal-duedate" /></label><br><br>
+
+        <div id="followup-container" style="display:none;">
+          <label>Follow-up Date (if pending): <input type="date" id="modal-followup" /></label><br><br>
+        </div>
+        <h3 style="background-color: #5a6f5e; color: white; padding: 10px;">Local Stock</h3>
+        <div style="overflow-x:auto;">
+          <table id="local-stock-table" border="1" style="width: 100%; text-align: left;">
+            <thead style="background-color: #5a6f5e; color: white;">
+              <tr>
+                <th>Qty</th>
+                <th>Description</th>
+                <th>Location</th>
+                <th>Cost</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="local-stock-body"></tbody>
+          </table>
+        </div><br>
+        <button id="add-local-stock" style="background-color: #5a6f5e; color: white; padding: 8px 12px; border: none; border-radius: 4px;">Add Local Stock Item</button>
+        <br><br>
+        <h3 style="background-color: #1c65b1; color: white; padding: 10px;">Rooms</h3>
+
+        <div style="overflow-x:auto;">
+          <table id="room-table" border="1" style="width: 100%; text-align: left;">
+            <thead>
+              <tr>
+                <th>PO</th>
+                <th>Room Type</th>
+                <th>Cost</th>
+                <th>Cabinet Line</th>
+                <th>Door Type</th>
+                <th>Color</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="room-table-body">
+            </tbody>
+          </table>
+        </div><br>
+
+        <button id="add-room-to-estimate">Add Room</button>
+        <button id="save-estimate-changes">Save Changes</button>
+        <button onclick="document.getElementById('estimate-modal').style.display='none'">Close</button>
+      </div>
+    </div>
   </div>
+
+  <hr>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const statusDropdown = document.getElementById("modal-estimate-status");
+      const followupContainer = document.getElementById("followup-container");
+
+      statusDropdown.addEventListener("change", function () {
+        if (this.value === "Pending") {
+          followupContainer.style.display = "block";
+        } else {
+          followupContainer.style.display = "none";
+          document.getElementById("modal-followup").value = "";
+        }
+      });
+    });
+  </script>
 
   <script src="leadDetails.js"></script>
 </body>

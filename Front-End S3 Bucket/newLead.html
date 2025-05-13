@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="style.css">
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="icon" href="data:,">
@@ -22,6 +24,7 @@
     </style>
 </head>
 <body>
+    <script src="header.js" defer></script>
 
     <h1>Create a New Lead Opportunity</h1>
 
@@ -68,8 +71,9 @@
         <label for="lnotes">Notes:</label><br>
         <input type="text" id="lnotes" name="lnotes"><br><br>
 
-        <input type="submit" value="Submit">
-        <a href="index.html?v=2"><button type="button">Back</button></a>
+        <input type="submit" value="Submit" class="primary-action">
+        <a href="index.html?v=2" class="secondary-action back-link">Back</a>
+
     </form>
 
     <script>

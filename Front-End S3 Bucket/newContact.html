@@ -5,6 +5,8 @@
 <!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
     <head>
+        <link rel="stylesheet" href="style.css">
+
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title></title>
@@ -31,25 +33,24 @@
             <label for="cphone">Phone Number:</label><br>
             <input type="text" id="cphone" name="cphone"><br>
             <label for="cemail">Email:</label><br>
-            <input type="text" id="cemail" name="cemail"><br>
-            <label for="clabel">Label:</label><br>
-            <input type="text" id="clabel" name="clabel"><br><br>
-            <input type="submit" value="Submit"><br><br>
-            <button id="backButton">Back</button>
+            <input type="text" id="cemail" name="cemail"><br> <br>
+            <input type="submit" value="Submit" class="primary-action"><br><br>
+            <button id="backButton" type="button" class="secondary-action">Back</button>
+
 
             <script>
                 document.getElementById("backButton").addEventListener("click", function(event) {
-                event.preventDefault(); // Prevent default behavior
+                event.preventDefault(); 
 
                 const referrer = document.referrer;
-                console.log("Referrer detected:", referrer); // Debugging log
+                console.log("Referrer detected:", referrer); 
 
                 if (referrer && referrer !== window.location.href) {
-                    window.location.href = referrer; // Redirect to previous page
+                    window.location.href = referrer; 
                 } else if (window.history.length > 1) {
-                    history.back(); // Go back in browser history
+                    history.back(); 
                 } else {
-                    window.location.href = "index.html"; // Fallback if no referrer
+                    window.location.href = "index.html"; 
                 }
                 });
 
@@ -65,11 +66,10 @@
                     state: document.querySelector("input[name='cstate']").value,
                     zip: document.querySelector("input[name='czip']").value,
                     phone: document.querySelector("input[name='cphone']").value,
-                    email: document.querySelector("input[name='cemail']").value,
-                    label: document.querySelector("input[name='clabel']").value
+                    email: document.querySelector("input[name='cemail']").value
                 };
 
-                console.log("Collected Form Data:", formData); // Debugging: See data before sending
+                console.log("Collected Form Data:", formData);
 
                 try {
                     const response = await fetch("https://nf00mihne3.execute-api.us-east-2.amazonaws.com/apistage/create-contact", {

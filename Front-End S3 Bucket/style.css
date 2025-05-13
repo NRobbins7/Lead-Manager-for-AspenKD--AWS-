@@ -1,0 +1,221 @@
+:root {
+    --primary-blue: #1c65b1;
+    --primary-green: #5a6f5e;
+    --text-dark: #2d2d2d;
+    --background-light: #f9f9f9;
+    --border-light: #e0e0e0;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    margin: 0;
+    padding: 20px;
+  }
+  
+  h1, h2, h3 {
+    color: var(--primary-blue);
+    margin-top: 0;
+  }
+  
+  a {
+    color: var(--primary-blue);
+    text-decoration: none;
+  }
+  
+  button {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  button:hover {
+    background-color: #15528c;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  textarea,
+  select {
+    padding: 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  textarea {
+    resize: vertical;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: white;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  
+  th {
+    background-color: #1c65b1;
+    color: white;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  td {
+    padding: 10px;
+    border-top: 1px solid var(--border-light);
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f1f1f1;
+  }
+  
+  #estimate-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+  }
+  
+  #estimate-list button {
+    display: block;
+    margin-bottom: 8px;
+    width: 100%;
+    background-color: var(--primary-green);
+  }
+  
+  #estimate-list button:hover {
+    background-color: #4a594e;
+  }
+  
+  @media (max-width: 768px) {
+    #estimate-layout {
+      flex-direction: column;
+    }
+  }
+button.delete-estimate {
+  background-color: #b14646;
+  font-size: 13px;
+  padding: 6px 12px;
+  margin-top: 4px;
+  border-radius: 4px;
+}
+
+button.delete-estimate:hover {
+  background-color: #8c2f2f;
+}
+#estimate-list button.delete-estimate {
+    background-color: #b14646 !important;
+    font-size: 13px !important;
+    padding: 6px 12px !important;
+    margin-top: 6px;
+    border-radius: 4px;
+    width: auto !important;
+    display: inline-block !important;
+  }
+  
+  #estimate-list button.delete-estimate:hover {
+    background-color: #8c2f2f !important;
+  }
+  button.primary-action {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  
+  button.primary-action:hover {
+    background-color: #15528c;
+  }
+  
+  button.secondary-action {
+    background-color: #e0e0e0;
+    color: #333;
+    padding: 8px 16px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  input[type="submit"].primary-action {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 10px 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  input[type="submit"].primary-action:hover {
+    background-color: #15528c;
+  }
+  #main-header {
+    background-color: #1c65b1;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#main-header button {
+    background-color: white;
+    color: #1c65b1;
+    border: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+#main-header button.active {
+    background-color: #5a6f5e;
+    color: white;
+}
+.lead-details-container {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.detail-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 180px;
+}
+
+.field-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.field-group input,
+.field-group textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
